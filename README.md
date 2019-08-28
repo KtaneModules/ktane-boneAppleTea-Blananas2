@@ -1,1 +1,1 @@
-ktane-boneAppleTea
+#[ModKit Wiki](../../wiki)

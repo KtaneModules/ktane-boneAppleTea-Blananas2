@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Text.RegularExpressions;
 using KModkit;
 
 public class boneAppleTeaScript : MonoBehaviour {
@@ -121,6 +122,61 @@ public class boneAppleTeaScript : MonoBehaviour {
             {
                 rightChar = (rightChar + 37) % 38;
                 texts[3].text = characters[rightChar];
+            }
+        }
+    }
+
+    //twitch plays
+    private bool inputIsValid(string s)
+    {
+        s = s.ToUpper();
+        char[] valids = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        if (s.Length != 2)
+        {
+            return false;
+        }
+        else if (!valids.Contains(s.ElementAt(0)))
+        {
+            return false;
+        }
+        else if (!valids.Contains(s.ElementAt(1)))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    #pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} submit 8T [Submits the specified pair of characters, in this example '8' and 'T' respectively]";
+    #pragma warning restore 414
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        string[] parameters = command.Split(' ');
+        if (Regex.IsMatch(parameters[0], @"^\s*submit\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(command, @"^\s*cont\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            if(parameters.Length == 2)
+            {
+                if (inputIsValid(parameters[1]))
+                {
+                    yield return null;
+                    string thing = parameters[1].ElementAt(0) + "";
+                    string thing2 = parameters[1].ElementAt(1) + "";
+                    while (!texts[2].text.Trim().EqualsIgnoreCase(thing))
+                    {
+                        buttons[0].OnInteract();
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    while (!texts[3].text.Trim().EqualsIgnoreCase(thing2))
+                    {
+                        buttons[2].OnInteract();
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    buttons[4].OnInteract();
+                    yield break;
+                }
             }
         }
     }

@@ -14,6 +14,10 @@ public class boneAppleTeaScript : MonoBehaviour {
     public KMSelectable[] buttons; //0=TL, 1=BL, 2=TR, 3=BL, 4=submit
     public TextMesh[] texts; //0=T, 1=B, 2=L, 3=R
 
+    private Coroutine buttonHold;
+	private bool holding = false;
+    private int btn = 0;
+
     public List<string> characters = new List<string> { " 0 ", " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", " A ", " B ", " C ", " D ", " E ", " F ", " G ", " H ", " I ", " J ", " K ", " L ", " M ", " N ", " O ", " P ", " Q ", " R ", " S ", " T ", " U ", " V ", " W ", " X ", " Y ", " Z ", " & ", " $ " };
     int phrase1 = 0;
     int phrase2 = 0;
@@ -70,6 +74,7 @@ public class boneAppleTeaScript : MonoBehaviour {
         foreach (KMSelectable button in buttons) {
             KMSelectable pressedButton = button;
             button.OnInteract += delegate () { buttonPress(pressedButton); return false; };
+            button.OnInteractEnded += delegate { buttonRelease(pressedButton); };
         }
     }
 
@@ -83,6 +88,23 @@ public class boneAppleTeaScript : MonoBehaviour {
         Debug.LogFormat("[Bone Apple Tea #{0}] The bottom phrase is: \"{1}\"", moduleId, phrases[phrase2]);
         Debug.LogFormat("[Bone Apple Tea #{0}] The correct left character is:{1}", moduleId, characters[phrase1]);
         Debug.LogFormat("[Bone Apple Tea #{0}] The correct right character is:{1}", moduleId, characters[phrase2]);
+    }
+
+    IEnumerator HoldChecker()
+	{
+		yield return new WaitForSeconds(.4f);
+        holding = true;
+        backHere:
+        if (holding) {
+            switch (btn) {
+                case 0: leftChar = (leftChar + 1) % 38; texts[2].text = characters[leftChar]; break;
+                case 1: leftChar = (leftChar + 37) % 38; texts[2].text = characters[leftChar]; break;
+                case 2: rightChar = (rightChar + 1) % 38; texts[3].text = characters[rightChar]; break;
+                case 3: rightChar = (rightChar + 37) % 38; texts[3].text = characters[rightChar]; break;
+            }
+        }
+        yield return new WaitForSeconds(0.075f);
+        goto backHere;
     }
 
     void buttonPress(KMSelectable button)
@@ -107,23 +129,32 @@ public class boneAppleTeaScript : MonoBehaviour {
             {
                 leftChar = (leftChar + 1) % 38;
                 texts[2].text = characters[leftChar];
+                btn = 0;
             }
             else if (button == buttons[1])
             {
                 leftChar = (leftChar + 37) % 38;
                 texts[2].text = characters[leftChar];
+                btn = 1;
             }
             else if (button == buttons[2])
             {
                 rightChar = (rightChar + 1) % 38;
                 texts[3].text = characters[rightChar];
+                btn = 2;
             }
             else if (button == buttons[3])
             {
                 rightChar = (rightChar + 37) % 38;
                 texts[3].text = characters[rightChar];
+                btn = 3;
             }
+            buttonHold = StartCoroutine(HoldChecker());
         }
+    }
+
+    void buttonRelease (KMSelectable button) {
+        StopCoroutine(buttonHold);
     }
 
     //twitch plays

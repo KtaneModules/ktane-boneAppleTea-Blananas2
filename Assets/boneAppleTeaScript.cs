@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,9 +102,9 @@ public class boneAppleTeaScript : MonoBehaviour {
                 case 2: rightChar = (rightChar + 1) % 38; texts[3].text = characters[rightChar]; break;
                 case 3: rightChar = (rightChar + 37) % 38; texts[3].text = characters[rightChar]; break;
             }
+            yield return new WaitForSeconds(0.075f);
+            goto backHere;
         }
-        yield return new WaitForSeconds(0.075f);
-        goto backHere;
     }
 
     void buttonPress(KMSelectable button)
@@ -116,12 +116,12 @@ public class boneAppleTeaScript : MonoBehaviour {
             {
                 if (leftChar == phrase1 && rightChar == phrase2)
                 {
-                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are correct. Module solved.", moduleId, characters[leftChar], characters[rightChar]);
+                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are correct. Module solved.", moduleId, characters[leftChar], characters[rightChar].Substring(0,(characters[rightChar].Length - 1)));
                     GetComponent<KMBombModule>().HandlePass();
                     moduleSolved = true;
                 } else
                 {
-                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are incorrect. Module striked.", moduleId, characters[leftChar], characters[rightChar]);
+                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are incorrect. Module striked.", moduleId, characters[leftChar], characters[rightChar].Substring(0,(characters[rightChar].Length - 1)));
                     GetComponent<KMBombModule>().HandleStrike();
                 }
             }
@@ -154,14 +154,15 @@ public class boneAppleTeaScript : MonoBehaviour {
     }
 
     void buttonRelease (KMSelectable button) {
-        StopCoroutine(buttonHold);
+        holding = false;
+        StopAllCoroutines();
     }
 
     //twitch plays
     private bool inputIsValid(string s)
     {
         s = s.ToUpper();
-        char[] valids = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        char[] valids = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '&', '$' };
         if (s.Length != 2)
         {
             return false;
@@ -198,14 +199,17 @@ public class boneAppleTeaScript : MonoBehaviour {
                     while (!texts[2].text.Trim().EqualsIgnoreCase(thing))
                     {
                         buttons[0].OnInteract();
+                        buttons[0].OnInteractEnded();
                         yield return new WaitForSeconds(0.1f);
                     }
                     while (!texts[3].text.Trim().EqualsIgnoreCase(thing2))
                     {
                         buttons[2].OnInteract();
+                        buttons[2].OnInteractEnded();
                         yield return new WaitForSeconds(0.1f);
                     }
                     buttons[4].OnInteract();
+                    buttons[4].OnInteractEnded();
                     yield break;
                 }
             }

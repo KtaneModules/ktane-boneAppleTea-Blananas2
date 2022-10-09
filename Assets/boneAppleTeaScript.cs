@@ -18,20 +18,20 @@ public class boneAppleTeaScript : MonoBehaviour {
 	private bool holding = false;
     private int btn = 0;
 
-    public List<string> characters = new List<string> { " 0 ", " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", " A ", " B ", " C ", " D ", " E ", " F ", " G ", " H ", " I ", " J ", " K ", " L ", " M ", " N ", " O ", " P ", " Q ", " R ", " S ", " T ", " U ", " V ", " W ", " X ", " Y ", " Z ", " & ", " $ " };
+    private List<string> characters = new List<string> { " 0 ", " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", " A ", " B ", " C ", " D ", " E ", " F ", " G ", " H ", " I ", " J ", " K ", " L ", " M ", " N ", " O ", " P ", " Q ", " R ", " S ", " T ", " U ", " V ", " W ", " X ", " Y ", " Z ", " & ", " $ " };
     int phrase1 = 0;
     int phrase2 = 0;
     int leftChar = 0;
     int rightChar = 0;
-    public List<string> phrases = new List<string> {
+    private List<string> phrases = new List<string> {
         "Bone Apple Tea",
         "Seizure Salad",
         "Hey to break it to ya",
         "This is oak ward",
         "Clea Shay",
-        "It’s in tents",
+        "It's in tents",
         "Bench watch",
-        "You’re an armature",
+        "You're an armature",
         "Man hat in",
         "Try all and era",
         "Million Air",
@@ -41,13 +41,13 @@ public class boneAppleTeaScript : MonoBehaviour {
         "What a nice jester",
         "In some near",
         "This is my master peace",
-        "I’m in a colder sac",
+        "I'm in a colder sac",
         "Cereal killer",
         "I come here off ten",
         "Slide of ham",
         "Test lah",
         "Refreshing campaign",
-        "I’m being more pacific",
+        "I'm being more pacific",
         "God blast you",
         "BC soft wear",
         "Sense in humor",
@@ -57,7 +57,7 @@ public class boneAppleTeaScript : MonoBehaviour {
         "Hammy downs",
         "Yum, a case idea",
         "Dandy long legs",
-        "Can’t merge, little lone drive",
+        "Can't merge, little lone drive",
         "My guest is",
         "Sink",
         "You lake it",

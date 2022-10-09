@@ -6,7 +6,8 @@ using UnityEngine;
 using System.Text.RegularExpressions;
 using KModkit;
 
-public class boneAppleTeaScript : MonoBehaviour {
+public class boneAppleTeaScript : MonoBehaviour
+{
 
     public KMBombInfo Bomb;
     public KMAudio Audio;
@@ -15,7 +16,7 @@ public class boneAppleTeaScript : MonoBehaviour {
     public TextMesh[] texts; //0=T, 1=B, 2=L, 3=R
 
     private Coroutine buttonHold;
-	private bool holding = false;
+    private bool holding = false;
     private int btn = 0;
 
     private List<string> characters = new List<string> { " 0 ", " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", " A ", " B ", " C ", " D ", " E ", " F ", " G ", " H ", " I ", " J ", " K ", " L ", " M ", " N ", " O ", " P ", " Q ", " R ", " S ", " T ", " U ", " V ", " W ", " X ", " Y ", " Z ", " & ", " $ " };
@@ -69,9 +70,11 @@ public class boneAppleTeaScript : MonoBehaviour {
     int moduleId;
     private bool moduleSolved;
 
-    void Awake () {
+    void Awake()
+    {
         moduleId = moduleIdCounter++;
-        foreach (KMSelectable button in buttons) {
+        foreach (KMSelectable button in buttons)
+        {
             KMSelectable pressedButton = button;
             button.OnInteract += delegate () { buttonPress(pressedButton); return false; };
             button.OnInteractEnded += delegate { buttonRelease(pressedButton); };
@@ -79,8 +82,9 @@ public class boneAppleTeaScript : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
-		phrase1 = UnityEngine.Random.Range(0, 38);
+    void Start()
+    {
+        phrase1 = UnityEngine.Random.Range(0, 38);
         phrase2 = UnityEngine.Random.Range(0, 38);
         texts[0].text = phrases[phrase1];
         texts[1].text = phrases[phrase2];
@@ -91,16 +95,19 @@ public class boneAppleTeaScript : MonoBehaviour {
     }
 
     IEnumerator HoldChecker()
-	{
-		yield return new WaitForSeconds(.4f);
+    {
+        yield return new WaitForSeconds(.4f);
         holding = true;
         backHere:
-        if (holding) {
-            switch (btn) {
+        if (holding)
+        {
+            switch (btn)
+            {
                 case 0: leftChar = (leftChar + 1) % 38; texts[2].text = characters[leftChar]; break;
                 case 1: leftChar = (leftChar + 37) % 38; texts[2].text = characters[leftChar]; break;
                 case 2: rightChar = (rightChar + 1) % 38; texts[3].text = characters[rightChar]; break;
                 case 3: rightChar = (rightChar + 37) % 38; texts[3].text = characters[rightChar]; break;
+                case 4: break;
             }
             yield return new WaitForSeconds(0.075f);
             goto backHere;
@@ -109,19 +116,21 @@ public class boneAppleTeaScript : MonoBehaviour {
 
     void buttonPress(KMSelectable button)
     {
-        if (moduleSolved == false) {
+        if (moduleSolved == false)
+        {
             button.AddInteractionPunch();
             GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
             if (button == buttons[4])
             {
                 if (leftChar == phrase1 && rightChar == phrase2)
                 {
-                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are correct. Module solved.", moduleId, characters[leftChar], characters[rightChar].Substring(0,(characters[rightChar].Length - 1)));
+                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are correct. Module solved.", moduleId, characters[leftChar], characters[rightChar].Substring(0, (characters[rightChar].Length - 1)));
                     GetComponent<KMBombModule>().HandlePass();
                     moduleSolved = true;
-                } else
+                }
+                else
                 {
-                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are incorrect. Module striked.", moduleId, characters[leftChar], characters[rightChar].Substring(0,(characters[rightChar].Length - 1)));
+                    Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are incorrect. Module striked.", moduleId, characters[leftChar], characters[rightChar].Substring(0, (characters[rightChar].Length - 1)));
                     GetComponent<KMBombModule>().HandleStrike();
                 }
             }
@@ -153,66 +162,128 @@ public class boneAppleTeaScript : MonoBehaviour {
         }
     }
 
-    void buttonRelease (KMSelectable button) {
+    void buttonRelease(KMSelectable button)
+    {
         holding = false;
         StopAllCoroutines();
     }
 
-    //twitch plays
-    private bool inputIsValid(string s)
-    {
-        s = s.ToUpper();
-        char[] valids = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '&', '$' };
-        if (s.Length != 2)
-        {
-            return false;
-        }
-        else if (!valids.Contains(s.ElementAt(0)))
-        {
-            return false;
-        }
-        else if (!valids.Contains(s.ElementAt(1)))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    #pragma warning disable 414
+#pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} submit 8T [Submits the specified pair of characters, in this example '8' and 'T' respectively]";
-    #pragma warning restore 414
+#pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
+        command = command.Trim().ToLowerInvariant();
         string[] parameters = command.Split(' ');
-        if (Regex.IsMatch(parameters[0], @"^\s*submit\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(command, @"^\s*cont\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        var m = Regex.Match(parameters[0], @"^\s*(submit|cont)\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        if (!m.Success || parameters.Length != 2 || parameters[1].Length != 2)
+            yield break;
+        string str = "0123456789abcdefghijklmnopqrstuvwxyz&$";
+        int targetA = str.IndexOf(parameters[1][0]);
+        int targetB = str.IndexOf(parameters[1][1]);
+        if (new[] { targetA, targetB }.Contains(-1))
+            yield break;
+        yield return null;
+        yield return "solve";
+        yield return "strike";
+        if (leftChar != targetA)
         {
-            if(parameters.Length == 2)
+            var distance = (Math.Abs(leftChar - targetA) + 19) % 38 - 19;
+            if (leftChar > targetA)
+                distance *= -1;
+            if (distance > 0)
             {
-                if (inputIsValid(parameters[1]))
-                {
+                buttons[0].OnInteract();
+                while (leftChar != targetA)
                     yield return null;
-                    string thing = parameters[1].ElementAt(0) + "";
-                    string thing2 = parameters[1].ElementAt(1) + "";
-                    while (!texts[2].text.Trim().EqualsIgnoreCase(thing))
-                    {
-                        buttons[0].OnInteract();
-                        buttons[0].OnInteractEnded();
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                    while (!texts[3].text.Trim().EqualsIgnoreCase(thing2))
-                    {
-                        buttons[2].OnInteract();
-                        buttons[2].OnInteractEnded();
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                    buttons[4].OnInteract();
-                    buttons[4].OnInteractEnded();
-                    yield break;
-                }
+                buttons[0].OnInteractEnded();
+                yield return new WaitForSeconds(0.05f);
             }
+            else if (distance < 0)
+            {
+                buttons[1].OnInteract();
+                while (leftChar != targetA)
+                    yield return null;
+                buttons[1].OnInteractEnded();
+                yield return new WaitForSeconds(0.05f);
+            }
+            yield return new WaitForSeconds(0.1f);
         }
+        if (rightChar != targetB)
+        {
+            var distance = (Math.Abs(rightChar - targetB) + 19) % 38 - 19;
+            if (rightChar > targetB)
+                distance *= -1;
+            if (distance > 0)
+            {
+                buttons[2].OnInteract();
+                while (rightChar != targetB)
+                    yield return null;
+                buttons[2].OnInteractEnded();
+                yield return new WaitForSeconds(0.05f);
+            }
+            else if (distance < 0)
+            {
+                buttons[3].OnInteract();
+                while (rightChar != targetB)
+                    yield return null;
+                buttons[3].OnInteractEnded();
+                yield return new WaitForSeconds(0.05f);
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        buttons[4].OnInteract();
+        yield return null;
+        buttons[4].OnInteractEnded();
+        yield break;
+    }
+
+    private IEnumerator TwitchHandleForcedSolve()
+    {
+        if (leftChar != phrase1)
+        {
+            var distance = (Math.Abs(leftChar - phrase1) + 19) % 38 - 19;
+            if (leftChar > phrase1)
+                distance *= -1;
+            if (distance > 0)
+            {
+                buttons[0].OnInteract();
+                while (leftChar != phrase1)
+                    yield return null;
+                buttons[0].OnInteractEnded();
+            }
+            else if (distance < 0)
+            {
+                buttons[1].OnInteract();
+                while (leftChar != phrase1)
+                    yield return null;
+                buttons[1].OnInteractEnded();
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (rightChar != phrase2)
+        {
+            var distance = (Math.Abs(rightChar - phrase2) + 19) % 38 - 19;
+            if (rightChar > phrase2)
+                distance *= -1;
+            if (distance > 0)
+            {
+                buttons[2].OnInteract();
+                while (rightChar != phrase2)
+                    yield return null;
+                buttons[2].OnInteractEnded();
+            }
+            else if (distance < 0)
+            {
+                buttons[3].OnInteract();
+                while (rightChar != phrase2)
+                    yield return null;
+                buttons[3].OnInteractEnded();
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        buttons[4].OnInteract();
+        yield return null;
+        buttons[4].OnInteractEnded();
     }
 }

@@ -12,7 +12,8 @@ public class boneAppleTeaScript : MonoBehaviour
     public KMBombInfo Bomb;
     public KMAudio Audio;
 
-    public KMSelectable[] buttons; //0=TL, 1=BL, 2=TR, 3=BL, 4=submit
+    public KMSelectable[] buttons; //0=TL, 1=BL, 2=TR, 3=BL
+    public KMSelectable submitButton;
     public TextMesh[] texts; //0=T, 1=B, 2=L, 3=R
 
     private Coroutine buttonHold;
@@ -79,6 +80,8 @@ public class boneAppleTeaScript : MonoBehaviour
             button.OnInteract += delegate () { buttonPress(pressedButton); return false; };
             button.OnInteractEnded += delegate { buttonRelease(pressedButton); };
         }
+
+        submitButton.OnInteract += delegate () { buttonPress(submitButton); return false; };
     }
 
     // Use this for initialization
@@ -119,8 +122,8 @@ public class boneAppleTeaScript : MonoBehaviour
         if (moduleSolved == false)
         {
             button.AddInteractionPunch();
-            GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
-            if (button == buttons[4])
+            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, button.transform);
+            if (button == submitButton)
             {
                 if (leftChar == phrase1 && rightChar == phrase2)
                 {
@@ -133,6 +136,7 @@ public class boneAppleTeaScript : MonoBehaviour
                     Debug.LogFormat("[Bone Apple Tea #{0}] The characters you submitted are{1}and{2}, which are incorrect. Module striked.", moduleId, characters[leftChar], characters[rightChar].Substring(0, (characters[rightChar].Length - 1)));
                     GetComponent<KMBombModule>().HandleStrike();
                 }
+                return;
             }
             else if (button == buttons[0])
             {
@@ -233,8 +237,6 @@ public class boneAppleTeaScript : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         buttons[4].OnInteract();
-        yield return null;
-        buttons[4].OnInteractEnded();
         yield break;
     }
 
@@ -283,7 +285,5 @@ public class boneAppleTeaScript : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         buttons[4].OnInteract();
-        yield return null;
-        buttons[4].OnInteractEnded();
     }
 }

@@ -2310,14 +2310,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf617c8d3f92b07449321d108e1ab563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Bomb: {fileID: 0}
-  Audio: {fileID: 0}
+  Bomb: {fileID: 114454383462897410}
+  Audio: {fileID: 114915473299363512}
   buttons:
   - {fileID: 114969261036431532}
   - {fileID: 114871388781806900}
   - {fileID: 114081646554299198}
   - {fileID: 114004876478992246}
-  - {fileID: 114128420231236822}
+  submitButton: {fileID: 114128420231236822}
   texts:
   - {fileID: 102795815731863350}
   - {fileID: 102538711513002314}

@@ -236,7 +236,7 @@ public class boneAppleTeaScript : MonoBehaviour
             }
             yield return new WaitForSeconds(0.1f);
         }
-        buttons[4].OnInteract();
+        submitButton.OnInteract();
         yield break;
     }
 
@@ -284,6 +284,6 @@ public class boneAppleTeaScript : MonoBehaviour
             }
             yield return new WaitForSeconds(0.1f);
         }
-        buttons[4].OnInteract();
+        submitButton.OnInteract();
     }
 }
